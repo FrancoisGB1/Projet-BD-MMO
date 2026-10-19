@@ -106,7 +106,7 @@ CREATE TABLE habilete (
     monde_id        INTEGER             NOT NULL,
 
     CONSTRAINT cc_habilete_sigle
-        CHECK (sigle ~* '^P'),
+        CHECK (sigle ~* 'P$'),
     CONSTRAINT fk_habilete_monde
         FOREIGN KEY (monde_id)
         REFERENCES jeu(id)
@@ -137,9 +137,9 @@ CREATE TABLE jeu (
     "description"   VARCHAR(2048),
 
     CONSTRAINT cc_jeu_nom
-        CHECK (nom ~* '^[a-zA-Z].{3,}'),
+        CHECK (nom ~* '^[a-zA-Z].{2,15}'),
     CONSTRAINT cc_jeu_sigle
-        CHECK (sigle ~* '^[a-zA-Z]')
+        CHECK (sigle ~* '^[a-zA-Z].{5}')
 );
 
 CREATE TABLE portail (
@@ -149,7 +149,7 @@ CREATE TABLE portail (
     cout            NUMERIC(4,2)    NOT NULL DEFAULT 0,
 
     CONSTRAINT cc_portail_source_destination
-        CHECK (source <> destination),
+        CHECK (destination <> source),
     CONSTRAINT fk_portail_source
         FOREIGN KEY (source)
         REFERENCES jeu(id),

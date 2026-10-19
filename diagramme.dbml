@@ -1,0 +1,184 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+enum type_genre {
+  femme_cisgenre
+  homme_cisgenre
+  femme_transgenre
+  homme_transgenre
+  non_binaire
+  genre_fluide
+  autre
+}
+enum type_rarete {
+  commun
+  rare
+  epique
+  legendaire
+}
+
+Table joueur {
+  id integer [PRIMARY KEY]
+  alias varchar(32) UNIQUE [NOT NULL]
+  courriel varchar(128) UNIQUE [NOT NULL]
+  mdp varchar(32) [NOT NULL]
+  genre type_genre [default: null]
+  date_inscription date [default: 'now()']
+  date_de_naissance date [NOT NULL]
+  avatar_initial integer UNIQUE [NOT NULL]
+  checks {
+    `date_de_naissance > 1900-01-01` [name: 'check_naissance_valide']
+    `date_inscription > 2024-10-01` [name: 'check_inscription_valide']
+  }
+}
+
+Table liste_abonnement{
+  id_joueur integer [NOT NULL]
+  date_debut date [NOT NULL]
+  date_fin date
+
+  checks {
+    `date_fin > date_debut` [name: 'check_date_valide']
+  }
+}
+
+Ref: liste_abonnement.id_joueur > joueur.id
+
+Table item {
+  id integer [PRIMARY KEY]
+  jeu_id integer [NOT NULL]
+  nom varchar(32) UNIQUE [NOT NULL]
+  sigle char(4) UNIQUE [NOT NULL]
+  rarete type_rarete [NOT NULL]
+
+  probabilite integer(1, 3) [NOT NULL]
+  // Doit concorder avec rarete :
+  //commun : [0.200, 1.000[
+  //rare : [0.050, 0.200[
+  //épique : [0.010, 0.050[
+  //légendaire : ]0.000, 0.010[
+  
+  description varchar(1024) [NOT NULL]
+  valeur integer(1e6, 2) [DEFAULT: 100.00]
+  
+  checks {
+    `LEFT(sigle, 1) = 'I'` [name: 'check_sigle_valide']
+  }
+}
+
+Ref: item.jeu_id > jeu.id
+
+Table item_obtenus{
+  avatar_id integer [NOT NULL]
+  item_id integer [NOT NULL]
+  date_obtention datetime [DEFAULT: 'now()']
+  quantite integer(1e3) [DEFAULT : 1]
+}
+
+Ref: item.id < item_obtenus.item_id
+Ref: item_obtenus.avatar_id > avatar.id
+
+// --------------------------------------------------------------
+Table jeu {
+  id integer [primary key]
+  nom varchar(16) [not null, unique]
+  sigle char(6) [not null, unique]
+  description varchar(2048)
+}
+
+Table habilete {
+  id integer [primary key]
+  nom varchar(32) [not null, unique]
+  sigle char(3) [not null, unique]
+  coef1 double [not null]
+  coef2 double [not null]
+  coef3 double [not null]
+  description varchar(1024) [not null]
+  monde_id integer [not null]
+}
+
+Table portail{
+  nom varchar(32) [not null, unique]
+  source integer [not null]
+  destination integer [not null]
+  cout numeric(4,2)
+}
+
+Table avatar {
+  id integer [primary key]
+  id_joueur integer [NOT NULL]
+  nom varchar(32) [not null, unique]
+  couleurs integer [not null]
+  date_creation date [not null]
+  mox numeric(4,2) [not null]
+}
+
+Table habilete_obtenu {
+  avatar_id integer [not null]
+  habilete_id integer [not null]
+  date_obtention datetime [not null]
+  niveau numeric(3, 0) [not null]
+}
+
+Table leitmotiv {
+  id integer [primary key]
+  phrase varchar(64) [not null]
+  avatar_id integer [not null]
+}
+
+Table echange {
+  id integer [primary key]
+  donneur integer [not null]
+  receveur integer [not null]
+  date datetime [not null]
+  mox numeric(4,2)
+}
+
+Table transaction {
+  id integer [primary key]
+  echange1_id integer [not null]
+  echange2_id integer [not null]
+}
+
+Table echange_item {
+  id integer [primary key]
+  echange_id integer [not null]
+  item_id integer [not null]
+}
+
+// joueur, temp, monde
+Table activite {
+  id integer [primary key]
+  joueur_id integer [not null]
+  debut datetime [not null]
+  duree integer [not null]
+}
+
+Table capsule_activite {
+  activite_id integer [not null]
+  avatar_id integer [not null]
+  monde_id integer [not null]
+  duree integer [not null]
+}
+
+Ref: portail.destination > jeu.id
+Ref: portail.source > jeu.id
+Ref: habilete.monde_id > jeu.id
+Ref: leitmotiv.avatar_id > avatar.id
+Ref: habilete_obtenu.avatar_id > avatar.id
+Ref: habilete_obtenu.habilete_id > habilete.id
+Ref: echange.donneur > avatar.id
+Ref: echange.receveur > avatar.id
+Ref: capsule_activite.activite_id > activite.id
+Ref: capsule_activite.avatar_id > avatar.id
+Ref: capsule_activite.monde_id > jeu.id
+Ref: joueur.avatar_initial - avatar.id
+Ref: activite.joueur_id > joueur.id
+Ref: avatar.id_joueur > joueur.id
+Ref: transaction.echange1_id - echange.id
+Ref: transaction.echange2_id - echange.id
+Ref: echange_item.echange_id > echange.id
+Ref: echange_item.item_id > item.id
+
+
+ 
