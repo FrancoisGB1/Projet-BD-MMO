@@ -149,9 +149,12 @@ CREATE TABLE echange (
     CONSTRAINT fk_echange_receveur
         FOREIGN KEY (receveur)
         REFERENCES avatar (id)
+
+    CONSTRAINT check_echange_diff
+        CHECK ( donneur <> receveur )
 );
 
--- echange des items pour plusieurs items
+-- échange des items pour plusieurs items
 
 CREATE TABLE echange_item(
     id INTEGER PRIMARY KEY,
@@ -189,103 +192,6 @@ CREATE TABLE "transaction" (
 
 
 
-
--- Emmanuel
-
-CREATE TABLE activite (
-    id              INTEGER     GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    joueur_id       INTEGER     NOT NULL,
-    debut           DATETIME    NOT NULL DEFAULT NOW(),
-    duree           INTEGER     NOT NULL,
-
-    CONSTRAINT cc_activite_duree
-        CHECK (duree > 0),
-    CONSTRAINT fk_activite_joueur_id
-        FOREIGN KEY (joueur_id)
-        REFERENCES joueur(id)
-);
-
-CREATE TABLE capsule_activite (
-    activite_id     INTEGER     NOT NULL,
-    avatar_id       INTEGER     NOT NULL,
-    monde_id        INTEGER     NOT NULL,
-    duree           INTEGER     NOT NULL,
-
-    CONSTRAINT cc_capsule_activite_duree
-        CHECK (duree > 0),
-    CONSTRAINT fk_capsule_activite_id
-        FOREIGN KEY (activite_id)
-        REFERENCES activite(id),
-    CONSTRAINT fk_capsule_activite_avatar
-        FOREIGN KEY (avatar_id)
-        REFERENCES avatar(id),
-    CONSTRAINT fk_capsule_activite_monde
-        FOREIGN KEY (monde_id)
-        REFERENCES jeu(id)
-);
-
-CREATE TABLE habilete (
-    id              INTEGER             GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nom             VARCHAR(32)         NOT NULL UNIQUE,
-    sigle           CHAR(3)             NOT NULL UNIQUE,
-    coef1           DOUBLE PRECISION    NOT NULL DEFAULT 0,
-    coef2           DOUBLE PRECISION    NOT NULL DEFAULT 0,
-    coef3           DOUBLE PRECISION    NOT NULL DEFAULT 1,
-    "description"   VARCHAR(1024)       NOT NULL,
-    monde_id        INTEGER             NOT NULL,
-
-    CONSTRAINT cc_habilete_sigle
-        CHECK (sigle ~* 'P$'),
-    CONSTRAINT fk_habilete_monde
-        FOREIGN KEY (monde_id)
-        REFERENCES jeu(id)
-);
-
-CREATE TABLE habilete_obtenu (
-    avatar_id       INTEGER         NOT NULL,
-    habilete_id     INTEGER         NOT NULL,
-    date_obtention  DATETIME        NOT NULL DEFAULT NOW(),
-    niveau          NUMERIC(3,0)    NOT NULL DEFAULT 1,
-
-    CONSTRAINT cc_habilete_obtenu_niveau
-        CHECK (niveau > 0 AND niveau < 101),
-    CONSTRAINT pk_habilete_obtenu
-        PRIMARY KEY (avatar_id, habilete_id),
-    CONSTRAINT fk_habilete_obtenu_avatar
-        FOREIGN KEY (avatar_id)
-        REFERENCES avatar(id),
-    CONSTRAINT fk_habilete_obtenu
-        FOREIGN KEY (habilete_id)
-        REFERENCES habilete(id)
-);
-
-CREATE TABLE jeu (
-    id              INTEGER         GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nom             VARCHAR(16)     NOT NULL UNIQUE,
-    sigle           CHAR(6)         NOT NULL UNIQUE,
-    "description"   VARCHAR(2048),
-
-    CONSTRAINT cc_jeu_nom
-        CHECK (nom ~* '^[a-zA-Z].{2,15}'),
-    CONSTRAINT cc_jeu_sigle
-        CHECK (sigle ~* '^[a-zA-Z].{5}')
-);
-
-CREATE TABLE portail (
-    nom             VARCHAR(32)     NOT NULL UNIQUE,
-    source          INTEGER         NOT NULL,
-    destination     INTEGER         NOT NULL,
-    cout            NUMERIC(4,2)    NOT NULL DEFAULT 0,
-
-    CONSTRAINT cc_portail_source_destination
-        CHECK (destination <> source),
-    CONSTRAINT fk_portail_source
-        FOREIGN KEY (source)
-        REFERENCES jeu(id),
-    CONSTRAINT fk_portail_destination
-        FOREIGN KEY (destination)
-        REFERENCES jeu(id)
-);
 
 ALTER TABLE joueur
     ADD CONSTRAINT fk_joueur_avatar_initial
