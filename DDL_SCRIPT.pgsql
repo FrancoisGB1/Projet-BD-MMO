@@ -61,6 +61,77 @@ CREATE TABLE liste_abonnement (
         CHECK (date_fin > date_debut)
 );
 
+-- Emmanuel
+
+CREATE TABLE activite (
+    id              INTEGER     GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    joueur_id       INTEGER     FOREIGN KEY,
+    debut           DATETIME    NOT NULL DEFAULT NOW(),
+    duree           INTEGER     NOT NULL,
+
+    CONSTRAINT cc_activite_duree
+        CHECK (duree > 0)
+);
+
+CREATE TABLE capsule_activite (
+    activite_id     INTEGER     FOREIGN KEY,
+    avatar_id       INTEGER     FOREIGN KEY,
+    monde_id        INTEGER     FOREIGN KEY,
+    duree           INTEGER     NOT NULL,
+
+    CONSTRAINT cc_capsule_activite_duree
+        CHECK (duree > 0)
+    -- Est-ce que une pk serait utile? Pour l'instant j'en met pas
+);
+
+CREATE TABLE habilete (
+    id              INTEGER             GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nom             VARCHAR(32)         NOT NULL UNIQUE,
+    sigle           CHAR(3)             NOT NULL UNIQUE,
+    coef1           DOUBLE PRECISION    NOT NULL DEFAULT 0,
+    coef2           DOUBLE PRECISION    NOT NULL DEFAULT 0,
+    coef3           DOUBLE PRECISION    NOT NULL DEFAULT 1,
+    "description"   VARCHAR(1024)       NOT NULL,
+    monde_id        INTEGER             FOREIGN KEY,
+
+    CONSTRAINT cc_habilete_sigle
+        CHECK (sigle ~* '^P')
+);
+
+CREATE TABLE habilete_obtenu (
+    avatar_id       INTEGER         FOREIGN KEY,
+    habilete_id     INTEGER         FOREIGN KEY,
+    date_obtention  DATETIME        NOT NULL DEFAULT NOW(),
+    niveau          NUMERIC(3,0)    NOT NULL DEFAULT 1,
+
+    CONSTRAINT cc_habilete_obtenu_niveau
+        CHECK (niveau > 0 AND niveau < 101),
+    CONSTRAINT pk_habilete_obtenu
+        PRIMARY KEY (avatar_id, habilete_id)
+);
+
+CREATE TABLE jeu (
+    id              INTEGER         GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nom             VARCHAR(16)     NOT NULL UNIQUE,
+    sigle           CHAR(6)         NOT NULL UNIQUE,
+    "description"   VARCHAR(2048),
+
+    CONSTRAINT cc_jeu_nom
+        CHECK (nom ~* '^[a-zA-Z].{3,}'),
+    CONSTRAINT cc_jeu_sigle
+        CHECK (sigle ~* '^[a-zA-Z]')
+);
+
+CREATE TABLE portail (
+    nom             VARCHAR(32)     NOT NULL UNIQUE,
+    source          INTEGER         FOREIGN KEY NOT NULL,
+    destination     INTEGER         FOREIGN KEY NOT NULL,
+    cout            NUMERIC(4,2)    NOT NULL DEFAULT 0,
+
+    CONSTRAINT cc_portail_source_destination
+        CHECK (source <> destination)
+);
+
 ALTER TABLE joueur
     ADD CONSTRAINT fk_joueur_avatar_initial
     FOREIGN KEY (avatar_initial)
