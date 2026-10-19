@@ -60,6 +60,135 @@ CREATE TABLE liste_abonnement (
     CONSTRAINT check_date_valide
         CHECK (date_fin > date_debut)
 );
+    -- Yerson --  
+
+CREATE TYPE type_rarete AS ENUM (
+    'commun',
+    'rare',
+    'epique',
+    'legendaire'
+);
+
+-- les items
+CREATE TABLE item (
+    id INTEGER PRIMARY KEY,
+    jeu_id INTEGER NOT NULL,
+    nom VARCHAR(32) NOT NULL UNIQUE,
+    sigle CHAR(4) NOT NULL UNIQUE,
+    rarete type_rarete NOT NULL,
+    probabilite NUMERIC(4,3) NOT NULL,
+    description VARCHAR(1024) NOT NULL,
+    valeur NUMERIC(8,2) DEFAULT 100.00,
+
+    CONSTRAINT fk_item_jeu
+        FOREIGN KEY(jeu_id)
+        REFERENCES jeu(id),
+
+    CONSTRAINT check_single_valide
+        CHECK (LEFT(single,1) = 'I'),
+
+    CONSTRAINT check_rarete_probabilite
+        CHECK(
+            (rarete = 'commun'
+                AND probabilite >= 0.200
+                AND probabilite < 1.000)
+            
+            OR 
+            (rarete = 'rare'
+                AND probabilite >= 0.500
+                AND probabilite < 0.200)
+            OR 
+            (rarete = 'epique'
+                AND probabilite >= 0.010
+                AND probabilite < 0.050)
+            
+            OR
+            (rarete = 'legendaire'
+                AND probabilite >= 0.000
+                AND probabilite >= 0.010)
+        )
+);
+
+    -- item obtenu
+
+CREATE TABLE item_obtenus (
+
+    avatar_id INTEGER  NOT NULL,
+    item_id INTEGER NO NULL,
+    date_obtention TIMESTAMP DEFAULT NOW(),
+    quantite INTEGER DEFAULT 1,
+
+    CONSTRAINT pk_item_obtenus 
+        PRIMARY KEY(avatar_id, item_id),
+
+    CONSTRAINT pk_item_obtenus_avatar
+        FOREIGN KEY (avatar_id)
+        REFERENCES avatar(id),
+
+    CONSTRAINT fk_item_obtenus_item
+        FOREIGN KEY (item_id)
+        REFERENCES item(id),
+
+    CONSTRAINT check_quantite_valide
+        CHECK ( quantite BETWEEN 1 and 1000)
+);
+
+-- table echange --
+
+CREATE TABLE echange (
+    id INTEGER PRIMARY KEY,
+    donneur INTEGER NOT NULL,
+    receveur INTEGER NOT NULL,
+    date TIMESTAMP NOT NULL,
+    max NUMERIC(4,2),
+
+    CONSTRAINT fk_echange_donneur
+        FOREIGN KEY (donneur)
+        REFERENCES avatar(id),
+    
+    CONSTRAINT fk_echange_receveur
+        FOREIGN KEY (receveur)
+        REFERENCES avatar (id)
+);
+
+-- echange des items pour plusieurs items
+
+CREATE TABLE echange_item(
+    id INTEGER PRIMARY KEY,
+    echange_id INTEGER NOT NULL,
+    item_id INTEGER NOT NULL,
+
+    CONSTRAINT fk_echange_item_echange
+        FOREIGN KEY (echange_id)
+        REFERENCES echange (id),
+
+    CONSTRAINT fk_echange_item_item
+        FOREIGN KEY (item_id)
+        REFERENCES item (id)
+);
+
+-- table transaction -- 
+
+CREATE TABLE "transaction" (
+    id INTEGER PRIMARY KEY,
+    echange1_id INTEGER NOT NULL UNIQUE,
+    echange2_id INTEGER NOT NULL UNIQUE,
+
+    CONSTRAINT fk_transaction_echange1
+        FOREIGN KEY (echange1_id)
+        REFERENCES echange(id),
+
+    CONSTRAINT fk_transaction_echange2
+        FOREIGN KEY (echange2_id)
+        REFERENCES echange(id)
+);
+
+
+
+
+
+
+
 
 -- Emmanuel
 
@@ -163,3 +292,5 @@ ALTER TABLE joueur
     FOREIGN KEY (avatar_initial)
     REFERENCES avatar(id)
     DEFERRABLE INITIALLY DEFERRED;
+
+
