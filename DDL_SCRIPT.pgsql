@@ -80,12 +80,8 @@ CREATE TABLE item (
     description VARCHAR(1024) NOT NULL,
     valeur NUMERIC(8,2) DEFAULT 100.00,
 
-    CONSTRAINT fk_item_jeu
-        FOREIGN KEY(jeu_id)
-        REFERENCES jeu(id),
-
-    CONSTRAINT check_single_valide
-        CHECK (LEFT(single,1) = 'I'),
+    CONSTRAINT check_sigle_valide
+        CHECK (LEFT(sigle,1) = 'I'),
 
     CONSTRAINT check_rarete_probabilite
         CHECK(
@@ -114,7 +110,7 @@ CREATE TABLE item (
 CREATE TABLE item_obtenus (
 
     avatar_id INTEGER  NOT NULL,
-    item_id INTEGER NO NULL,
+    item_id INTEGER NOT NULL,
     date_obtention TIMESTAMP DEFAULT NOW(),
     quantite INTEGER DEFAULT 1,
 
@@ -148,7 +144,7 @@ CREATE TABLE echange (
     
     CONSTRAINT fk_echange_receveur
         FOREIGN KEY (receveur)
-        REFERENCES avatar (id)
+        REFERENCES avatar (id),
 
     CONSTRAINT check_echange_diff
         CHECK ( donneur <> receveur )
@@ -191,7 +187,7 @@ CREATE TABLE "transaction" (
 CREATE TABLE activite (
     id              INTEGER     GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     joueur_id       INTEGER     NOT NULL,
-    debut           DATETIME    NOT NULL DEFAULT NOW(),
+    debut           TIMESTAMP   NOT NULL DEFAULT NOW(),
     duree           INTEGER     NOT NULL,
 
     CONSTRAINT cc_activite_duree
@@ -214,10 +210,7 @@ CREATE TABLE capsule_activite (
         REFERENCES activite(id),
     CONSTRAINT fk_capsule_activite_avatar
         FOREIGN KEY (avatar_id)
-        REFERENCES avatar(id),
-    CONSTRAINT fk_capsule_activite_monde
-        FOREIGN KEY (monde_id)
-        REFERENCES jeu(id)
+        REFERENCES avatar(id)
 );
 
 CREATE TABLE habilete (
@@ -231,16 +224,13 @@ CREATE TABLE habilete (
     monde_id        INTEGER             NOT NULL,
 
     CONSTRAINT cc_habilete_sigle
-        CHECK (sigle ~* 'P$'),
-    CONSTRAINT fk_habilete_monde
-        FOREIGN KEY (monde_id)
-        REFERENCES jeu(id)
+        CHECK (sigle ~* 'P$')
 );
 
 CREATE TABLE habilete_obtenu (
     avatar_id       INTEGER         NOT NULL,
     habilete_id     INTEGER         NOT NULL,
-    date_obtention  DATETIME        NOT NULL DEFAULT NOW(),
+    date_obtention  TIMESTAMP       NOT NULL DEFAULT NOW(),
     niveau          NUMERIC(3,0)    NOT NULL DEFAULT 1,
 
     CONSTRAINT cc_habilete_obtenu_niveau
@@ -284,10 +274,6 @@ CREATE TABLE portail (
 );
 
 
-
-
-
-
 ALTER TABLE joueur
     ADD CONSTRAINT fk_joueur_avatar_initial
     FOREIGN KEY (avatar_initial)
@@ -295,3 +281,20 @@ ALTER TABLE joueur
     DEFERRABLE INITIALLY DEFERRED;
 
 
+ALTER TABLE item
+    ADD CONSTRAINT fk_item_jeu
+        FOREIGN KEY(jeu_id)
+        REFERENCES jeu(id)
+        DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE capsule_activite
+    ADD CONSTRAINT fk_capsule_activite_monde
+        FOREIGN KEY (monde_id)
+        REFERENCES jeu(id)
+        DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE habilete
+    ADD CONSTRAINT fk_habilete_monde
+        FOREIGN KEY (monde_id)
+        REFERENCES jeu(id)
+        DEFERRABLE INITIALLY DEFERRED;
