@@ -276,27 +276,27 @@ CREATE TABLE portail (
 );
 
 
-ALTER TABLE joueur
-    ADD CONSTRAINT fk_joueur_avatar_initial
-    FOREIGN KEY (avatar_initial)
-    REFERENCES avatar(id)
-    DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE joueur
+--     ADD CONSTRAINT fk_joueur_avatar_initial
+--     FOREIGN KEY (avatar_initial)
+--     REFERENCES avatar(id)
+--     DEFERRABLE INITIALLY DEFERRED;
 
 
-ALTER TABLE item
-    ADD CONSTRAINT fk_item_jeu
-        FOREIGN KEY(jeu_id)
-        REFERENCES jeu(id)
-        DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE item
+--     ADD CONSTRAINT fk_item_jeu
+--         FOREIGN KEY(jeu_id)
+--         REFERENCES jeu(id)
+--         DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE capsule_activite
-    ADD CONSTRAINT fk_capsule_activite_monde
-        FOREIGN KEY (monde_id)
-        REFERENCES jeu(id)
-        DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE capsule_activite
+--     ADD CONSTRAINT fk_capsule_activite_monde
+--         FOREIGN KEY (monde_id)
+--         REFERENCES jeu(id)
+--         DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE habilete
-    ADD CONSTRAINT fk_habilete_monde
-        FOREIGN KEY (monde_id)
-        REFERENCES jeu(id)
-        DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE habilete
+--     ADD CONSTRAINT fk_habilete_monde
+--         FOREIGN KEY (monde_id)
+--         REFERENCES jeu(id)
+--         DEFERRABLE INITIALLY DEFERRED;

@@ -1,6 +1,9 @@
-CREATE OR REPLACE FUNCTION encoder_couleur (p_cr INTEGER, p_cg INTEGER, p_cb INTEGER)
+-- Encoder couleur RGB en INTEGER 32 bit
+-- p_r, p_g, p_b: Champ couleurs r, g et b de 0 à 255
+-- exemple: SELECT encoder_couleur(255, 255, 255) -> Retourne un INTEGER 1677725
+CREATE OR REPLACE FUNCTION encoder_couleur (p_r INTEGER, p_g INTEGER, p_b INTEGER)
     RETURNS INTEGER
 LANGUAGE SQL
 AS $$
-    SELECT ((0::BIT(8) || p_cr::BIT(8) || p_cg::BIT(8) || p_cb::BIT(8))::BIT(32))::INTEGER
+    SELECT ((0::BIT(8) || p_r::BIT(8) || p_g::BIT(8) || p_b::BIT(8))::BIT(32))::INTEGER
 $$

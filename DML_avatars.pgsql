@@ -16,6 +16,7 @@ INSERT INTO avatar
             '2025-04-15',
             9912.50),
             (3,
+            1,
             'GuyMan',
             DEFAULT,
             DEFAULT,
