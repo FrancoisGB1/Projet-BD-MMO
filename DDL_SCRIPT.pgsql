@@ -33,7 +33,7 @@ CREATE TABLE avatar (
     couleur2 INTEGER DEFAULT 16777215,
     couleur3 INTEGER DEFAULT 16777215,
     date_creation DATE NOT NULL,
-    mox NUMERIC(4, 2) NOT NULL,
+    mox NUMERIC(8, 2) NOT NULL,     -- yers : jai change a 8 cause trop petit pour mox 
 
     CONSTRAINT fk_avatar_joueur
         FOREIGN KEY (id_joueur)
@@ -93,7 +93,7 @@ CREATE TABLE item (
             
             OR 
             (rarete = 'rare'
-                AND probabilite >= 0.500
+                AND probabilite >= 0.050
                 AND probabilite < 0.200)
             OR 
             (rarete = 'epique'
@@ -102,8 +102,8 @@ CREATE TABLE item (
             
             OR
             (rarete = 'legendaire'
-                AND probabilite >= 0.000
-                AND probabilite >= 0.010)
+                AND probabilite > 0.000
+                AND probabilite < 0.010)
         )
 );
 
@@ -138,7 +138,7 @@ CREATE TABLE echange (
     donneur INTEGER NOT NULL,
     receveur INTEGER NOT NULL,
     date TIMESTAMP NOT NULL,
-    max NUMERIC(4,2),
+    max NUMERIC(8,2),
 
     CONSTRAINT fk_echange_donneur
         FOREIGN KEY (donneur)
