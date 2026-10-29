@@ -9,7 +9,7 @@ CREATE TYPE type_genre AS ENUM (
 );
 
 CREATE TABLE joueur (
-    id INTEGER PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  -- yers : jai fix cause sinon ID vont pas etre 1,2,3
     alias VARCHAR(32) NOT NULL UNIQUE,
     courriel VARCHAR(128) NOT NULL UNIQUE,
     mdp VARCHAR(32) NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE item (
     rarete type_rarete NOT NULL,
     probabilite NUMERIC(4,3) NOT NULL,
     description VARCHAR(1024) NOT NULL,
-    valeur NUMERIC(8,2) DEFAULT 100.00,
+    valeur NUMERIC(9,2) DEFAULT 100.00,
 
     CONSTRAINT check_sigle_valide
         CHECK (LEFT(sigle,1) = 'I'),
@@ -119,7 +119,7 @@ CREATE TABLE item_obtenus (
     CONSTRAINT pk_item_obtenus 
         PRIMARY KEY(avatar_id, item_id),
 
-    CONSTRAINT pk_item_obtenus_avatar
+    CONSTRAINT fk_item_obtenus_avatar
         FOREIGN KEY (avatar_id)
         REFERENCES avatar(id),
 
@@ -138,7 +138,7 @@ CREATE TABLE echange (
     donneur INTEGER NOT NULL,
     receveur INTEGER NOT NULL,
     date TIMESTAMP NOT NULL,
-    max NUMERIC(8,2),
+    mox NUMERIC(9,2),
 
     CONSTRAINT fk_echange_donneur
         FOREIGN KEY (donneur)
@@ -146,10 +146,10 @@ CREATE TABLE echange (
     
     CONSTRAINT fk_echange_receveur
         FOREIGN KEY (receveur)
-        REFERENCES avatar (id),
+        REFERENCES avatar(id),
 
     CONSTRAINT check_echange_diff
-        CHECK ( donneur <> receveur )
+        CHECK (donneur <> receveur)
 );
 
 -- échange des items pour plusieurs items
