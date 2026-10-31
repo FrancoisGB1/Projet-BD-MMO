@@ -6,3 +6,4 @@ SELECT DISTINCT a.alias, a.courriel, a.date_inscription,
      END) 
     AS "statut" 
     FROM abonnement a
+    ORDER BY a.date_inscription ASC
