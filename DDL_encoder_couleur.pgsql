@@ -6,4 +6,4 @@ CREATE OR REPLACE FUNCTION encoder_couleur (p_r INTEGER, p_g INTEGER, p_b INTEGE
 LANGUAGE SQL
 AS $$
     SELECT ((0::BIT(8) || p_r::BIT(8) || p_g::BIT(8) || p_b::BIT(8))::BIT(32))::INTEGER
-$$
+$$;

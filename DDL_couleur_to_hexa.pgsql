@@ -5,5 +5,5 @@ CREATE OR REPLACE FUNCTION couleur_to_hexa (p_couleur INTEGER)
     RETURNS CHAR(7)
 LANGUAGE SQL
 AS $$
-    SELECT '#' || LPAD(to_hex(p_couleur)::TEXT, 6, '0')
-$$
+    SELECT '#' || UPPER(LPAD(to_hex(p_couleur)::TEXT, 6, '0'))
+$$;
