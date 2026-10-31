@@ -6,7 +6,7 @@ INSERT INTO joueur
             'homme_cisgenre', 
             '2025-02-14', 
             '1993-12-25', 
-            1),
+            NULL),
             (DEFAULT,
             'Yerson',
             'yers@hotmail.com',
@@ -14,7 +14,7 @@ INSERT INTO joueur
             'homme_cisgenre',
             '2024-11-20',
             '2000-06-05',
-            2),
+            NULL),
             (DEFAULT,
             'Timmy',
             'tim@proton.me',
@@ -22,4 +22,4 @@ INSERT INTO joueur
             'non_binaire',
             NOW(),
             '2010-01-01',
-            3);
+            NULL);

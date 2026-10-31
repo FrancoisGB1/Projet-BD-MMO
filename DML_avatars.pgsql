@@ -25,7 +25,7 @@ INSERT INTO avatar
             513.14),
             (4,
             2,
-            'Jolteon',
+            'Jolteon*',
             encoder_couleur(231, 217, 77),
             encoder_couleur(249, 248, 229),
             encoder_couleur(38, 29, 45),
@@ -41,9 +41,17 @@ INSERT INTO avatar
             100.00),
             (6,
             3,
-            'SephirotX2010',
+            'SephirotX2010*',
             encoder_couleur(0, 0, 0),
             encoder_couleur(0, 0, 0),
             encoder_couleur(0, 0, 0),
             NOW(),
-            0.0)
+            0.0);
+
+WITH link_avatar_initial AS (
+	SELECT avatar.id AS "avatar_id", id_joueur FROM avatar WHERE avatar.nom ~* '.+\*$'
+)
+UPDATE joueur
+	SET avatar_initial = avatar_id
+	FROM link_avatar_initial
+	WHERE joueur.id = link_avatar_initial.id_joueur

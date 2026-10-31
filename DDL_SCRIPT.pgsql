@@ -16,7 +16,7 @@ CREATE TABLE joueur (
     genre type_genre DEFAULT NULL,
     date_inscription DATE DEFAULT CURRENT_DATE,
     date_de_naissance DATE NOT NULL,
-    avatar_initial INTEGER NOT NULL UNIQUE,
+    avatar_initial INTEGER NULL UNIQUE,
 
     CONSTRAINT check_naissance_valide
         CHECK (date_de_naissance > DATE '1900-01-01'),
@@ -27,7 +27,7 @@ CREATE TABLE joueur (
 
 CREATE TABLE avatar (
     id INTEGER PRIMARY KEY,
-    id_joueur INTEGER NOT NULL,
+    id_joueur INTEGER NULL,
     nom VARCHAR(32) NOT NULL UNIQUE,
     couleur1 INTEGER NOT NULL DEFAULT 16777215,
     couleur2 INTEGER DEFAULT 16777215,
@@ -276,27 +276,27 @@ CREATE TABLE portail (
 );
 
 
--- ALTER TABLE joueur
---     ADD CONSTRAINT fk_joueur_avatar_initial
---     FOREIGN KEY (avatar_initial)
---     REFERENCES avatar(id)
---     DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE joueur
+    ADD CONSTRAINT fk_joueur_avatar_initial
+    FOREIGN KEY (avatar_initial)
+    REFERENCES avatar(id)
+    DEFERRABLE INITIALLY DEFERRED;
 
 
--- ALTER TABLE item
---     ADD CONSTRAINT fk_item_jeu
---         FOREIGN KEY(jeu_id)
---         REFERENCES jeu(id)
---         DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE item
+    ADD CONSTRAINT fk_item_jeu
+        FOREIGN KEY(jeu_id)
+        REFERENCES jeu(id)
+        DEFERRABLE INITIALLY DEFERRED;
 
--- ALTER TABLE capsule_activite
---     ADD CONSTRAINT fk_capsule_activite_monde
---         FOREIGN KEY (monde_id)
---         REFERENCES jeu(id)
---         DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE capsule_activite
+    ADD CONSTRAINT fk_capsule_activite_monde
+        FOREIGN KEY (monde_id)
+        REFERENCES jeu(id)
+        DEFERRABLE INITIALLY DEFERRED;
 
--- ALTER TABLE habilete
---     ADD CONSTRAINT fk_habilete_monde
---         FOREIGN KEY (monde_id)
---         REFERENCES jeu(id)
---         DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE habilete
+    ADD CONSTRAINT fk_habilete_monde
+        FOREIGN KEY (monde_id)
+        REFERENCES jeu(id)
+        DEFERRABLE INITIALLY DEFERRED;
