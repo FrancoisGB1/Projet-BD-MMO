@@ -182,6 +182,11 @@ CREATE TABLE echange_item(
     id INTEGER PRIMARY KEY,
     echange_id INTEGER NOT NULL,
     item_id INTEGER NOT NULL,
+    quantite INTEGER NOT NULL DEFAULT 1,
+
+    CONSTRAINT check_echange_item_quantite
+        CHECK (quantite BETWEEN 1 AND 1000),
+
 
     CONSTRAINT fk_echange_item_echange
         FOREIGN KEY (echange_id)
