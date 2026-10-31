@@ -81,7 +81,10 @@ CREATE TABLE liste_abonnement (
         REFERENCES joueur(id),
 
     CONSTRAINT check_date_valide
-        CHECK (date_fin > date_debut)
+        CHECK (date_fin > date_debut),
+    
+    CONSTRAINT uc_date_fin
+        UNIQUE NULLS NOT DISTINCT(id_joueur, date_fin)
 );
     -- Yerson --  
 
