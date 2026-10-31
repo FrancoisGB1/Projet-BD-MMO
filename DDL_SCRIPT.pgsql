@@ -1,3 +1,24 @@
+DROP TABLE IF EXISTS 	activite, 
+						avatar, 
+						capsule_activite, 
+						echange, 
+						echange_item, 
+						habilete, 
+						habilete_obtenu,
+						item,
+						item_obtenus,
+						jeu,
+						joueur,
+						leitmotiv,
+						liste_abonnement,
+						portail,
+						"transaction"
+						CASCADE;
+
+DROP TYPE IF EXISTS     type_genre,
+						type_rarete
+						CASCADE;
+
 CREATE TYPE type_genre AS ENUM (
     'femme_cisgenre',
     'homme_cisgenre',
