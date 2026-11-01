@@ -1,0 +1,63 @@
+-- C42 - Projet 1
+-- DML : insertion des items obtenus (responsable : Francois)
+-- obtenir_item : ajoute un item deja defini a l'inventaire d'un avatar.
+-- Parametres :
+--   p_avatar_id       : identifiant numerique de l'avatar
+--   p_item_id         : identifiant numerique de l'item
+--   p_date_obtention  : date et heure d'obtention
+--   p_quantite        : nombre d'exemplaires (entre 1 et 1000)
+-- Retour : aucune valeur.
+
+
+
+DROP PROCEDURE IF EXISTS obtenir_item(INTEGER, INTEGER, TIMESTAMP, INTEGER);
+
+CREATE PROCEDURE obtenir_item(
+    p_avatar_id INTEGER,
+    p_item_id INTEGER,
+    p_date_obtention TIMESTAMP,
+    p_quantite INTEGER
+)
+LANGUAGE SQL
+AS $$
+    INSERT INTO item_obtenus (
+        avatar_id,
+        item_id,
+        date_obtention,
+        quantite
+    )
+    VALUES (
+        p_avatar_id,
+        p_item_id,
+        p_date_obtention,
+        p_quantite
+    );
+$$;
+
+
+
+-- JohnMMO* : inventaire varie (4 items differents).
+CALL obtenir_item(1, 2, '2025-03-01 10:00:00', 12); -- Chaussures
+CALL obtenir_item(1, 1, '2025-05-10 12:00:00',  4); -- Potions
+CALL obtenir_item(1, 3, '2026-02-11 17:30:00',  2); -- Tridents
+CALL obtenir_item(1, 4, '2026-03-14 09:15:00',  1); -- Teinture
+
+-- NotASmurf : peut donner des items a d'autres avatars lors des echanges.
+CALL obtenir_item(2, 2, '2025-04-30 11:30:00',  8); -- Chaussures
+CALL obtenir_item(2, 1, '2025-07-15 15:00:00',  3); -- Potions
+CALL obtenir_item(2, 3, '2026-01-24 18:45:00',  1); -- Trident
+
+-- GuyMan.
+CALL obtenir_item(3, 2, '2025-09-20 13:20:00',  5); -- Chaussures
+
+-- Jolteon*.
+CALL obtenir_item(4, 2, '2025-01-05 14:00:00',  6); -- Chaussures
+CALL obtenir_item(4, 3, '2025-08-20 19:00:00',  1); -- Trident
+
+-- Cheko.
+CALL obtenir_item(5, 2, '2025-07-01 16:00:00',  3); -- Chaussures
+CALL obtenir_item(5, 4, '2026-02-11 11:30:00',  1); -- Teinture
+
+
+CALL obtenir_item(6, 2, NOW()::TIMESTAMP, 2);
+
