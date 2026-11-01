@@ -1,4 +1,5 @@
--- DML : transaction reliant deux echanges directes
+-- DML : transaction reliant deux echanges 
+-- repush 
 
 INSERT INTO "transaction" (id, echange1_id, echange2_id)
 VALUES
