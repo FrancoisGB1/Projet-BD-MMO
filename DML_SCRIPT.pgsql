@@ -106,7 +106,7 @@ WITH link_avatar_initial AS (
 UPDATE joueur
 	SET avatar_initial = avatar_id
 	FROM link_avatar_initial
-	WHERE joueur.id = link_avatar_initial.id_joueur
+	WHERE joueur.id = link_avatar_initial.id_joueur;
 
 
 
@@ -118,6 +118,19 @@ VALUES
 
 
 
+INSERT INTO liste_abonnement
+    VALUES  (1,
+            '2025-02-14',
+            NULL),
+            (2,
+            '2024-11-20',
+            '2024-12-19'),
+            (2,
+            '2025-02-10',
+            '2025-09-11');
+
+
+
 -- C42 - Projet 1
 -- DML : insertion des jeux (responsable : Francois)
 -- creer_jeu : ajoute un jeu (monde) a la base de donnees.
@@ -125,9 +138,6 @@ VALUES
 --              p_description = description facultative du jeu.
 -- Retour : aucune valeur.
 -- Exemple : CALL creer_jeu('SpaceX', 'SPACEX', 'Monde spatial.');
-
-
-
 
 DROP PROCEDURE IF EXISTS creer_jeu(VARCHAR, CHAR(6), VARCHAR);
 
@@ -162,4 +172,326 @@ CALL creer_jeu(
     'Monde d affrontements ou les avatars ameliorent leur visee et leur mobilite.'
 );
 
+
+
+INSERT INTO portail
+    VALUES ('FreeZoneX to SpaceX',
+            3,
+            1,
+            10.00),
+            ('SpaceX to FreeZoneX',
+            1,
+            3,
+            0.00),
+
+            ('FreeZoneX to DeepHorizonX',
+            3,
+            2,
+            25.00),
+            ('DeepHorizonX to FreeZoneX',
+            2,
+            3,
+            0.00),
+
+            ('DeepHorizonX to SpaceX',
+            2,
+            1,
+            5.00);
+
+
+
+INSERT INTO habilete
+    (nom, sigle, coef1, coef2, coef3, "description", monde_id)
+VALUES
+    (
+        'Ralentir le temps',
+        'RTP',
+        1.0,
+        2.0,
+        10.0,
+        'Permet de ralentir le temps pendant une certaine duree.',
+        1
+    ),
+    (
+        'Bouclier de proximite',
+        'BPP',
+        1.5,
+        2.0,
+        15.0,
+        'Cree un bouclier de protection autour de l avatar.',
+        1
+    ),
+    (
+        'Auto guerison',
+        'AGP',
+        2.0,
+        3.0,
+        20.0,
+        'Permet a l avatar de recuperer de la vie automatiquement.',
+        2
+    ),
+    (
+        'Zoom oculaire',
+        'ZOP',
+        1.0,
+        1.5,
+        10.0,
+        'Permet d augmenter le niveau de zoom.',
+        2
+    ),
+    (
+        'Visee automatique',
+        'VAP',
+        2.0,
+        2.5,
+        15.0,
+        'Aide l avatar a viser automatiquement ses cibles.',
+        3
+    ),
+    (
+        'Ubiquite',
+        'UBP',
+        3.0,
+        2.0,
+        25.0,
+        'Permet a l avatar d etre present a plusieurs endroits.',
+        3
+    );
+
+
+
+-- C42 - Projet 1
+-- DML : habiletes obtenues (responsable : Francois)
+
+-- obtenir_habilete : attribue une habilete a un avatar.
+-- Parametres :
+-- p_avatar_id : ID de l'avatar
+-- p_habilete_id : ID de l'habilete
+-- p_date_obtention : date et heure de l'obtention
+-- p_niveau : niveau de l'habilete (1 a 100)
+-- Retour : aucune valeur.
+-- Exemple : CALL obtenir_habilete(1, 1, '2025-03-03 10:00:00', 5);
+
+
+DROP PROCEDURE IF EXISTS obtenir_habilete(INTEGER, INTEGER, TIMESTAMP, INTEGER);
+
+CREATE PROCEDURE obtenir_habilete(
+    p_avatar_id INTEGER,
+    p_habilete_id INTEGER,
+    p_date_obtention TIMESTAMP,
+    p_niveau INTEGER
+)
+LANGUAGE SQL
+AS $$
+    INSERT INTO habilete_obtenu (
+        avatar_id,
+        habilete_id,
+        date_obtention,
+        niveau
+    )
+    VALUES (
+        p_avatar_id,
+        p_habilete_id,
+        p_date_obtention,
+        p_niveau
+    );
+$$;
+
+
+-- AVATAR PRINCIPAL : JohnMMO* (ID 1)
+-- Une habilete provenant de chaque monde.
+
+CALL obtenir_habilete(1, 1, '2025-03-03 10:00:00', 5);
+CALL obtenir_habilete(1, 3, '2025-06-12 13:30:00', 3);
+CALL obtenir_habilete(1, 5, '2025-10-05 17:00:00', 7);
+
+
+-- DEUXIEME AVATAR : NotASmurf (ID 2)
+-- Trois habiletes, provenant de seulement deux mondes.
+
+CALL obtenir_habilete(2, 1, '2025-04-18 09:00:00', 2);
+CALL obtenir_habilete(2, 2, '2025-04-22 11:30:00', 4);
+CALL obtenir_habilete(2, 4, '2025-05-03 15:00:00', 3);
+
+
+-- AUTRES AVATARS
+
+-- GuyMan (ID 3)
+CALL obtenir_habilete(3, 6, '2025-10-01 14:20:00', 1);
+
+-- Jolteon* (ID 4)
+CALL obtenir_habilete(4, 2, '2024-12-01 18:00:00', 2);
+CALL obtenir_habilete(4, 3, '2025-04-01 10:00:00', 3);
+
+-- Cheko (ID 5)
+CALL obtenir_habilete(5, 4, '2025-07-08 20:00:00', 1);
+
+-- SephirotX2010* (ID 6) : aucune habilete.
+
+
+
+INSERT INTO item
+    VALUES (1,
+            2,
+            'Potion de lévitation',
+            'IPL1',
+            'rare',
+            0.150,
+            'Induit le statut de lévitation pour une durée de 4 minutes.',
+            220.00),
+            (2,
+            1,
+            'Chaussures de Course 1',
+            'IBV1',
+            'commun',
+            0.600,
+            'Permet de courir 1.1x plus vite',
+            100.00),
+            (3,
+            3,
+            'Trident Royal',
+            'ITR1',
+            'epique',
+            0.010,
+            'Pillé des ruines d Atlantis, ce trident appartenais autrefois à un garde du palais royal. Brandir cet arme empêche le désarmement.',
+            5700.00),
+            (4,
+            2, 
+            'Teinture noire',
+            'ITN1',
+            'legendaire',
+            0.002,
+            'Change la couleur de pièces d équipement en noir. Utilisable 1 fois.',
+            9999.99);
+
+
+
+-- C42 - Projet 1
+-- DML : insertion des items obtenus (responsable : Francois)
+-- obtenir_item : ajoute un item deja defini a l'inventaire d'un avatar.
+-- Parametres :
+--   p_avatar_id       : identifiant numerique de l'avatar
+--   p_item_id         : identifiant numerique de l'item
+--   p_date_obtention  : date et heure d'obtention
+--   p_quantite        : nombre d'exemplaires (entre 1 et 1000)
+-- Retour : aucune valeur.
+
+
+
+DROP PROCEDURE IF EXISTS obtenir_item(INTEGER, INTEGER, TIMESTAMP, INTEGER);
+
+CREATE PROCEDURE obtenir_item(
+    p_avatar_id INTEGER,
+    p_item_id INTEGER,
+    p_date_obtention TIMESTAMP,
+    p_quantite INTEGER
+)
+LANGUAGE SQL
+AS $$
+    INSERT INTO item_obtenus (
+        avatar_id,
+        item_id,
+        date_obtention,
+        quantite
+    )
+    VALUES (
+        p_avatar_id,
+        p_item_id,
+        p_date_obtention,
+        p_quantite
+    );
+$$;
+
+
+-- JohnMMO* : inventaire varie (4 items differents).
+CALL obtenir_item(1, 2, '2025-03-01 10:00:00', 12); -- Chaussures
+CALL obtenir_item(1, 1, '2025-05-10 12:00:00',  4); -- Potions
+CALL obtenir_item(1, 3, '2026-02-11 17:30:00',  2); -- Tridents
+CALL obtenir_item(1, 4, '2026-03-14 09:15:00',  1); -- Teinture
+
+-- NotASmurf : peut donner des items a d'autres avatars lors des echanges.
+CALL obtenir_item(2, 2, '2025-04-30 11:30:00',  8); -- Chaussures
+CALL obtenir_item(2, 1, '2025-07-15 15:00:00',  3); -- Potions
+CALL obtenir_item(2, 3, '2026-01-24 18:45:00',  1); -- Trident
+
+-- GuyMan.
+CALL obtenir_item(3, 2, '2025-09-20 13:20:00',  5); -- Chaussures
+
+-- Jolteon*.
+CALL obtenir_item(4, 2, '2025-01-05 14:00:00',  6); -- Chaussures
+CALL obtenir_item(4, 3, '2025-08-20 19:00:00',  1); -- Trident
+
+-- Cheko.
+CALL obtenir_item(5, 2, '2025-07-01 16:00:00',  3); -- Chaussures
+CALL obtenir_item(5, 4, '2026-02-11 11:30:00',  1); -- Teinture
+
+
+CALL obtenir_item(6, 2, NOW()::TIMESTAMP, 2);
+
+
+
+INSERT INTO echange (id, donneur, receveur, date, mox)
+VALUES
+    (1, 1, 2, '2026-09-15 14:30:00', 250.00),
+
+    -- echange d'item seulement
+    (2, 2, 3, '2026-09-20 16:00:00', NULL),
+
+    -- echange entre avatars de joueurs differents
+    (3, 2, 4, '2026-10-01 18:45:00', 500.00),
+
+    -- retour de l'echange #3
+    (4, 4, 2, '2026-10-01 18:45:00', NULL);
+
+
+
+-- items contenus dans les echanges
+
+INSERT INTO echange_item (id, echange_id, item_id, quantite)
+VALUES
+    -- echange #2 : item seulement
+    (1, 2, 2, 1),
+
+    -- echange #4 : retour de la transaction
+    (2, 4, 3, 1);
+
+
+
+-- DML : transaction reliant deux echanges
+
+INSERT INTO "transaction" (id, echange1_id, echange2_id)
+VALUES
+    (1, 3, 4);
+
+
+
+-- C42 - Projet 1 : DML activite
+-- Une activite est une session de jeu d'un joueur; duree en secondes.
+-- ajouter_activite : enregistre une session de jeu.
+-- Parametres : p_joueur_id = ID du joueur; p_debut = debut de la session;
+--              p_duree = duree totale en secondes (inclut menus/chargements).
+-- Retour : aucune valeur.
+
+DROP PROCEDURE IF EXISTS ajouter_activite(INTEGER, TIMESTAMP, INTEGER);
+CREATE PROCEDURE ajouter_activite(p_joueur_id INTEGER, p_debut TIMESTAMP, p_duree INTEGER)
+LANGUAGE SQL
+AS $$
+    INSERT INTO activite (joueur_id, debut, duree) VALUES (p_joueur_id, p_debut, p_duree);
+$$;
+
+-- Joueur 1 (principal payant) : trois activites, IDs 1, 2 et 3.
+CALL ajouter_activite(1, '2025-04-25 10:00:00', 5400); -- activite 1
+CALL ajouter_activite(1, '2025-10-16 18:00:00', 7200); -- activite 2
+CALL ajouter_activite(1, '2026-03-09 20:30:00', 6300); -- activite 3
+
+-- Joueur 2 (ancien payant) : uniquement pendant sa 2e periode
+-- d'abonnement, du 2025-02-10 au 2025-09-11.
+CALL ajouter_activite(2, '2025-07-12 14:00:00', 4800); -- activite 4
+CALL ajouter_activite(2, '2025-08-20 19:00:00', 3600); -- activite 5
+
+-- Joueur 3 (invite) : trois activites, le jour de son inscription.
+-- Il ne peut utiliser que son avatar initial (6) dans le monde g0 (1).
+CALL ajouter_activite(3, CURRENT_DATE + TIME '08:00:00', 2400); -- activite 6
+CALL ajouter_activite(3, CURRENT_DATE + TIME '11:00:00', 3600); -- activite 7
+CALL ajouter_activite(3, CURRENT_DATE + TIME '14:00:00', 1800); -- activite 8
 
