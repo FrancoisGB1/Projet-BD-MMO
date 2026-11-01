@@ -1,5 +1,4 @@
 -- yers - Pour le joueur principal, donnez le temps total passé dans chaque monde joué,
-- blablalblalbla
 -- au format HH:MM:SS. Le tout trié par temps décroissant.
 
 SELECT
